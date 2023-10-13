@@ -1,39 +1,41 @@
+import { useEffect, useState } from "react";
 import { Movies } from "./components/Movies";
 import { useMovies } from "./hooks/useMovies";
+import { useDebounce } from "./hooks/useDebounce";
 
 function App() {
   const { movies, refreshMovies } = useMovies();
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    let { query } = Object.fromEntries(new window.FormData(e.target));
-    query = query.trim();
-    if (!query) {
-      e.target.reset();
-      return;
-    }
-    refreshMovies(query);
-  };
+  const [query, setQuery] = useState("");
+  const { debouncedValue } = useDebounce({ value: query });
 
   const handleChange = (e) => {
-    refreshMovies(e.target.value);
+    let { value } = e.target;
+    if (value.startsWith(" ")) return;
+    value = value.trim();
+    setQuery(value);
   };
+
+  useEffect(() => {
+    if (debouncedValue) {
+      refreshMovies(debouncedValue);
+    }
+  }, [debouncedValue]);
 
   return (
     <>
       <header>
         <h1>Search Your Movie</h1>
-        <form onSubmit={handleSubmit}>
+        <div>
           <input
+            value={query}
             onChange={handleChange}
             name="query"
             type="text"
             placeholder="Search a movie..."
           />
-          <button>Search</button>
-        </form>
+        </div>
       </header>
-      {movies !== null && <Movies movies={movies} />}
+      {query && movies !== null && <Movies movies={movies} />}
     </>
   );
 }
