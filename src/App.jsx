@@ -15,12 +15,21 @@ function App() {
     refreshMovies(query);
   };
 
+  const handleChange = (e) => {
+    refreshMovies(e.target.value);
+  };
+
   return (
     <>
       <header>
         <h1>Search Your Movie</h1>
         <form onSubmit={handleSubmit}>
-          <input name="query" type="text" placeholder="Search a movie..." />
+          <input
+            onChange={handleChange}
+            name="query"
+            type="text"
+            placeholder="Search a movie..."
+          />
           <button>Search</button>
         </form>
       </header>
