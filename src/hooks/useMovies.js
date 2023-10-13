@@ -6,6 +6,7 @@ export const useMovies = () => {
   const search = useRef(null);
 
   const refreshMovies = async (query) => {
+    console.log("refreshing movies");
     if (search.current == query) return;
     search.current = query;
     const movies = await getMovies(query);
